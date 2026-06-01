@@ -17,7 +17,7 @@ Automatizar o registro, aprovação e pagamento de gastos realizados por funcion
 
 ## 🔄 Fluxo do sistema
 
-![Fluxo do sistema](docs/flow.png)
+![Fluxo do sistema](docs/docsflow.png)
 
 ## 🛠 Tecnologias
 
