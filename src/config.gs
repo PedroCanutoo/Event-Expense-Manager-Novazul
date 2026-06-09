@@ -1,6 +1,6 @@
 const SHEETS = {
     FORM_RESPONSES: "Respostas do formulário 1",
-    BASE_GASTPS: "BASE_GASTOS",
+    BASE_GASTOS: "BASE_GASTOS",
     FINANCEIRO: "FINANCEIRO",
     EVENTOS: "EVENTOS",
     CONFIG: "CONFIG",
