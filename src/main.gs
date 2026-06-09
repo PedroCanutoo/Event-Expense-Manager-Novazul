@@ -1,3 +1,3 @@
-function myFunction() {
-
+function onFormSubmit(e) {
+  processarNovoGasto(e);
 }
