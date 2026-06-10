@@ -74,7 +74,7 @@ function salvarGastoNaBase(registro) {
 // ============================================================
 // Essa função coordena o fluxo de cadastro de um novo gasto:
 // pega os dados do formulário, gera o ID, formata o registro
-// e salva na BASE_GASTOS.
+// e salva na BASE_GASTOS e na FINANCEIRO.
 // ============================================================
 function processarNovoGasto(e) {
     const dadosFormulario = getResponseForm(e);
@@ -82,4 +82,5 @@ function processarNovoGasto(e) {
     const registro = formatarRegistroGasto(dadosFormulario, idGasto);
 
     salvarGastoNaBase(registro);
+    atualizarAbaFinanceiro();
 }
