@@ -88,3 +88,53 @@ function atualizarAbaFinanceiro() {
     limparDadosFinanceiro();
     inserirgastosFinanceiros(registrosFinanceiro);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+// ============================================================
+// Essa função recebe um ID de gasto, procura esse ID na
+// BASE_GASTOS e retorna o número da linha onde ele está.
+// ============================================================
+// ============================================================
+// Essa função recebe o ID de um gasto, procura esse ID na
+// BASE_GASTOS e retorna a linha onde o gasto está.
+// ============================================================
+function buscarLinhaGastoPorId(idGasto) {
+  const sheet = getSheet(SHEETS.BASE_GASTOS);
+  const data = sheet.getDataRange().getValues();
+
+  for (let i = 1; i < data.length; i++) {
+    const idAtual = data[i][0];
+
+    if (idAtual === idGasto) {
+      return i + 1;
+    }
+  }
+
+  return null;
+}
+
+
+// ============================================================
+// Função preenche a aba base gastos, atualizando o status do gasto 
+// para pago, a forma de pagamento, o responsavel financeiro, o comprovante 
+// financeiro e a observação. Depois atualiza a aba FINANCEIRO.
+// ============================================================
+function processarPagamento(idGasto, formaPagamento, responsavelFinanceiro, comprovanteFinanceiro, observacao) {
+  const linha = buscarLinhaGastoPorId(idGasto);
+
+  if (!linha) {
+    throw new Error("Gasto não encontrado + id" + idGasto);
+  }
+
+  const sheet = getSheet(SHEETS.BASE_GASTOS);
+
+  sheet.getRange(linha, 11).setValue(STATUS.PAGO);
+  sheet.getRange(linha, 12).setValue(formaPagamento);
+  sheet.getRange(linha, 13).setValue(responsavelFinanceiro);
+  sheet.getRange(linha, 14).setValue(comprovanteFinanceiro);
+  sheet.getRange(linha, 15).setValue(observacao);
+
+  atualizarAbaFinanceiro();
+}
