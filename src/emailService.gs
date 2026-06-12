@@ -16,7 +16,7 @@ function enviarEmailPagamentoConfirmado(
   const assunto = `Pagamento confirmado - ${idGasto}`;
 
   const corpo = `
-    Olá,
+    Olá, ${emailFuncionario},
 
     O pagamento referente ao gasto ${idGasto} foi confirmado.
 
@@ -45,7 +45,7 @@ function enviarEmailGastoCancelado(
   const assunto = `Gasto cancelado - ${idGasto}`;
 
   const corpo = `
-Olá,
+Olá, ${emailFuncionario},
 
 O gasto ${idGasto} foi cancelado.
 
