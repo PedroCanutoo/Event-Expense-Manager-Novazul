@@ -7,7 +7,6 @@ function getSheet(sheetName) {
   return spreadsheet.getSheetByName(sheetName);
 }
 
-
 // =====================================================================================
 // Função é responsavel por receber uma chave, acessar a planilha config, procurar a
 // chave que foi passada por parâmetro e retornar o valor contido nessa chave.
@@ -29,7 +28,7 @@ function getConfigValue(key) {
 }
 
 // =====================================================================================
-// Função é responsavel por receber uma chave que já existe e um novo valor. 
+// Função é responsavel por receber uma chave que já existe e um novo valor.
 // ela acessa a aba de config, procura a chave que foi passada e se achar,
 // atualiza o valor dessa chave para o valor passado por parâmetro.
 // =====================================================================================

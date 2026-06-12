@@ -1,4 +1,18 @@
-function enviarEmailPagamentoConfirmado(emailFuncionario,idGasto,valor,evento,linkComprovante,) {
+// =========================================================================
+// Email Service - Responsável por enviar notificações por email aos funcionários
+// =========================================================================
+
+// ============================================================
+// Essa função é responsável por enviar um email ao funcionário quando o pagamento
+// de um gasto for confirmado. O email inclui detalhes do gasto e um link para o comprovante.
+// ============================================================
+function enviarEmailPagamentoConfirmado(
+  emailFuncionario,
+  idGasto,
+  valor,
+  evento,
+  linkComprovante,
+) {
   const assunto = `Pagamento confirmado - ${idGasto}`;
 
   const corpo = `
@@ -16,7 +30,18 @@ function enviarEmailPagamentoConfirmado(emailFuncionario,idGasto,valor,evento,li
 
   GmailApp.sendEmail(emailFuncionario, assunto, corpo);
 }
-function enviarEmailGastoCancelado(emailFuncionario, idGasto, evento, valor, motivoCancelamento) {
+
+
+// ============================================================
+// Essa função é responsável por enviar um email ao funcionário quando um gasto for cancelado.
+//=============================================================
+function enviarEmailGastoCancelado(
+  emailFuncionario,
+  idGasto,
+  evento,
+  valor,
+  motivoCancelamento,
+) {
   const assunto = `Gasto cancelado - ${idGasto}`;
 
   const corpo = `
