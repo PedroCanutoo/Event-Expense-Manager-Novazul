@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+</head>
+
+<body>
+  <h2>Processar pagamento</h2>
+
+  <p><strong>ID do gasto:</strong>
+    <?= idGasto ?>
+  </p>
+  <input type="hidden" id="idGasto" value="<?= idGasto ?>">
+
+  <br><br>
+
+  <label>Forma de pagamento</label>
+  <select id="formaPagamento">
+    <option value="PIX">PIX</option>
+    <option value="Transferência">Transferência</option>
+    <option value="Dinheiro">Dinheiro</option>
+    <option value="Outro">Outro</option>
+  </select>
+
+  <br><br>
+
+  <label>Responsável financeiro</label>
+  <input type="text" id="responsavelFinanceiro">
+
+  <br><br>
+
+  <label>Comprovante financeiro</label>
+  <input type="file" id="comprovanteFinanceiro" placeholder="Cole o link do Drive">
+
+  <br><br>
+
+  <label>Observação</label>
+  <textarea id="observacao"></textarea>
+
+  <br><br>
+
+  <button onclick="pagarGasto()">Pagar gasto</button>
+
+  <script>
+    function pagarGasto() {
+      const idGasto = document.getElementById("idGasto").value;
+      const formaPagamento = document.getElementById("formaPagamento").value;
+      const responsavelFinanceiro = document.getElementById("responsavelFinanceiro").value;
+      const arquivo = document.getElementById("comprovanteFinanceiro").files[0];
+      const observacao = document.getElementById("observacao").value;
+
+      if (!arquivo) {
+        alert("Selecione o comprovante financeiro.");
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const base64 = event.target.result.split(",")[1];
+
+        google.script.run
+          .withSuccessHandler((linkComprovante) => {
+            google.script.run
+              .withSuccessHandler(() => {
+                alert("Pagamento processado com sucesso!");
+                google.script.host.close();
+              })
+              .withFailureHandler((error) => {
+                alert("Erro ao processar pagamento: " + error.message);
+              })
+              .processarPagamento(
+                idGasto,
+                formaPagamento,
+                responsavelFinanceiro,
+                linkComprovante,
+                observacao
+              );
+          })
+          .withFailureHandler((error) => {
+            alert("Erro ao enviar comprovante: " + error.message);
+          })
+          .uploadComprovanteFinanceiro(
+            base64,
+            arquivo.name,
+            arquivo.type
+          );
+      };
+
+      reader.readAsDataURL(arquivo);
+    }
+  </script>
+</body>
+
+</html>
