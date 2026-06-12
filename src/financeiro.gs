@@ -1,4 +1,8 @@
 // =============================================================
+// RESPONSAVEL PELO PROCESSAMENTO DOS GASTOS, ATUALIZAÇÃO DA ABA FINANCEIRO E ENVIO DE EMAILS
+// =============================================================
+
+// =============================================================
 // Função pega os gastos pendestes da BASE_GASTOS
 // e retorna um array com eles
 // =============================================================
@@ -155,6 +159,10 @@ function processarPagamento(
   );
 }
 
+// ============================================================
+// Função para cancelar um gasto, recebe o ID do gasto e o motivo do
+// cancelamento, atualiza o status do gasto para cancelado,
+// ===============================================================
 function cancelarGasto(idGasto, motivoCancelamento) {
   const linha = buscarLinhaGastoPorId(idGasto);
 
@@ -169,7 +177,7 @@ function cancelarGasto(idGasto, motivoCancelamento) {
   sheet.getRange(linha, 13).setValue("-");
   sheet.getRange(linha, 14).setValue("-");
   sheet.getRange(linha, 15).setValue("-");
-  sheet.getRange(linha, 16).setValue("-"); 
+  sheet.getRange(linha, 16).setValue("-");
   sheet.getRange(linha, 17).setValue(motivoCancelamento);
 
   atualizarAbaFinanceiro();
@@ -177,6 +185,9 @@ function cancelarGasto(idGasto, motivoCancelamento) {
 
 ////////////////////////////////////////////////////////////////////////////////////////// - MODAL
 
+// ============================================================
+// Função para abrir o modal de pagamento, ela pega o ID do gasto selecionado
+// ============================================================
 function abrirModalPagamento() {
   const sheet = SpreadsheetApp.getActiveSheet();
   const linhaSelecionada = sheet.getActiveCell().getRow();
