@@ -172,6 +172,14 @@ function cancelarGasto(idGasto, motivoCancelamento) {
 
   const sheet = getSheet(SHEETS.BASE_GASTOS);
 
+  const dadosGasto = sheet
+    .getRange(linha, 1, 1, sheet.getLastColumn())
+    .getValues()[0];
+
+  const emailFuncionario = dadosGasto[2];
+  const evento = dadosGasto[3];
+  const valor = dadosGasto[7];
+
   sheet.getRange(linha, 11).setValue(STATUS.CANCELADO);
   sheet.getRange(linha, 12).setValue("-");
   sheet.getRange(linha, 13).setValue("-");
@@ -181,6 +189,14 @@ function cancelarGasto(idGasto, motivoCancelamento) {
   sheet.getRange(linha, 17).setValue(motivoCancelamento);
 
   atualizarAbaFinanceiro();
+
+  enviarEmailGastoCancelado(
+    emailFuncionario,
+    idGasto,
+    evento,
+    valor,
+    motivoCancelamento
+  );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////// - MODAL
