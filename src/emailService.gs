@@ -16,3 +16,21 @@ function enviarEmailPagamentoConfirmado(emailFuncionario,idGasto,valor,evento,li
 
   GmailApp.sendEmail(emailFuncionario, assunto, corpo);
 }
+function enviarEmailGastoCancelado(emailFuncionario, idGasto, evento, valor, motivoCancelamento) {
+  const assunto = `Gasto cancelado - ${idGasto}`;
+
+  const corpo = `
+Olá,
+
+O gasto ${idGasto} foi cancelado.
+
+Evento: ${evento}
+Valor: R$ ${valor}
+Motivo: ${motivoCancelamento}
+
+Atenciosamente,
+Equipe Nova Azul
+`;
+
+  GmailApp.sendEmail(emailFuncionario, assunto, corpo);
+}

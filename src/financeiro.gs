@@ -134,6 +134,7 @@ function processarPagamento(
   sheet.getRange(linha, 14).setValue(responsavelFinanceiro);
   sheet.getRange(linha, 15).setValue(comprovanteFinanceiro);
   sheet.getRange(linha, 16).setValue(observacao);
+  sheet.getRange(linha, 17).setValue("-");
 
   atualizarAbaFinanceiro();
 
@@ -152,6 +153,26 @@ function processarPagamento(
     evento,
     comprovanteFinanceiro,
   );
+}
+
+function cancelarGasto(idGasto, motivoCancelamento) {
+  const linha = buscarLinhaGastoPorId(idGasto);
+
+  if (!linha) {
+    throw new Error("Gasto não encontrado: " + idGasto);
+  }
+
+  const sheet = getSheet(SHEETS.BASE_GASTOS);
+
+  sheet.getRange(linha, 11).setValue(STATUS.CANCELADO);
+  sheet.getRange(linha, 12).setValue("-");
+  sheet.getRange(linha, 13).setValue("-");
+  sheet.getRange(linha, 14).setValue("-");
+  sheet.getRange(linha, 15).setValue("-");
+  sheet.getRange(linha, 16).setValue("-"); 
+  sheet.getRange(linha, 17).setValue(motivoCancelamento);
+
+  atualizarAbaFinanceiro();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////// - MODAL

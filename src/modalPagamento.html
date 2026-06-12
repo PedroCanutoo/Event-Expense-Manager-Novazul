@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <base target="_top">
 
@@ -95,6 +96,22 @@
       color: #1f4e79;
       font-weight: bold;
     }
+
+    .btn-cancelar-gasto {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #dc2626;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .btn-cancelar-gasto:hover {
+      background: #b91c1c;
+    }
   </style>
 </head>
 
@@ -103,7 +120,8 @@
 
   <div class="container">
     <div class="id-box">
-      <strong>ID do gasto:</strong> <?= idGasto ?>
+      <strong>ID do gasto:</strong>
+      <?= idGasto ?>
     </div>
 
     <input type="hidden" id="idGasto" value="<?= idGasto ?>">
@@ -138,6 +156,28 @@
       <button class="btn-cancelar" onclick="google.script.host.close()">Cancelar</button>
     </div>
 
+    <div class="actions">
+      <button class="btn-pagar" onclick="pagarGasto()">Pagar gasto</button>
+
+      <button class="btn-cancelar-gasto" onclick="mostrarCancelamento()">
+        Cancelar gasto
+      </button>
+
+      <button class="btn-cancelar" onclick="google.script.host.close()">
+        Fechar modal
+      </button>
+    </div>
+
+    <div id="cancelamentoBox" style="display:none; margin-top:15px;">
+      <label>Motivo do cancelamento</label>
+
+      <textarea id="motivoCancelamento" placeholder="Informe o motivo do cancelamento"></textarea>
+
+      <button class="btn-cancelar-gasto" onclick="confirmarCancelamento()">
+        Confirmar cancelamento
+      </button>
+    </div>
+
     <div id="loading" class="loading">Processando pagamento...</div>
   </div>
 
@@ -163,6 +203,31 @@
       loading.style.display = "block";
 
       const reader = new FileReader();
+
+      function mostrarCancelamento() {
+        document.getElementById("cancelamentoBox").style.display = "block";
+      }
+
+      function confirmarCancelamento() {
+        const idGasto = document.getElementById("idGasto").value;
+        const motivoCancelamento =
+          document.getElementById("motivoCancelamento").value;
+
+        if (!motivoCancelamento.trim()) {
+          alert("Informe o motivo do cancelamento.");
+          return;
+        }
+
+        google.script.run
+          .withSuccessHandler(() => {
+            alert("Gasto cancelado com sucesso!");
+            google.script.host.close();
+          })
+          .withFailureHandler((error) => {
+            alert("Erro ao cancelar gasto: " + error.message);
+          })
+          .cancelarGasto(idGasto, motivoCancelamento);
+      }
 
       reader.onload = function (event) {
         const base64 = event.target.result.split(",")[1];
@@ -199,6 +264,31 @@
 
       reader.readAsDataURL(arquivo);
     }
+
+    function mostrarCancelamento() {
+      document.getElementById("cancelamentoBox").style.display = "block";
+    }
+
+    function confirmarCancelamento() {
+      const idGasto = document.getElementById("idGasto").value;
+      const motivoCancelamento = document.getElementById("motivoCancelamento").value;
+
+      if (!motivoCancelamento.trim()) {
+        alert("Informe o motivo do cancelamento.");
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(() => {
+          alert("Gasto cancelado com sucesso!");
+          google.script.host.close();
+        })
+        .withFailureHandler((error) => {
+          alert("Erro ao cancelar gasto: " + error.message);
+        })
+        .cancelarGasto(idGasto, motivoCancelamento);
+    }
   </script>
 </body>
+
 </html>
