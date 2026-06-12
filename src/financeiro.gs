@@ -118,7 +118,7 @@ function processarPagamento(
   formaPagamento,
   responsavelFinanceiro,
   comprovanteFinanceiro,
-  observacao
+  observacao,
 ) {
   const linha = buscarLinhaGastoPorId(idGasto);
 
@@ -136,6 +136,22 @@ function processarPagamento(
   sheet.getRange(linha, 16).setValue(observacao);
 
   atualizarAbaFinanceiro();
+
+  const dadosGasto = sheet
+    .getRange(linha, 1, 1, sheet.getLastColumn())
+    .getValues()[0];
+
+  const emailFuncionario = dadosGasto[2];
+  const evento = dadosGasto[3];
+  const valor = dadosGasto[7];
+
+  enviarEmailPagamentoConfirmado(
+    emailFuncionario,
+    idGasto,
+    valor,
+    evento,
+    comprovanteFinanceiro,
+  );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////// - MODAL
