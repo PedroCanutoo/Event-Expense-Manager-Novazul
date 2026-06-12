@@ -1,59 +1,166 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <base target="_top">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      padding: 24px;
+    }
+
+    .header {
+      background: #1f4e79;
+      color: white;
+      padding: 18px 24px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .id-box {
+      background: white;
+      border-left: 5px solid #1f4e79;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 18px;
+      font-size: 15px;
+    }
+
+    .campo {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .actions {
+      margin-top: 20px;
+    }
+
+    .btn-pagar {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #1f4e79;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-cancelar {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #e5e7eb;
+      color: #374151;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .loading {
+      display: none;
+      margin-top: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: #1f4e79;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
-  <h2>Processar pagamento</h2>
+  <div class="header">Processar pagamento</div>
 
-  <p><strong>ID do gasto:</strong>
-    <?= idGasto ?>
-  </p>
-  <input type="hidden" id="idGasto" value="<?= idGasto ?>">
+  <div class="container">
+    <div class="id-box">
+      <strong>ID do gasto:</strong> <?= idGasto ?>
+    </div>
 
-  <br><br>
+    <input type="hidden" id="idGasto" value="<?= idGasto ?>">
 
-  <label>Forma de pagamento</label>
-  <select id="formaPagamento">
-    <option value="PIX">PIX</option>
-    <option value="Transferência">Transferência</option>
-    <option value="Dinheiro">Dinheiro</option>
-    <option value="Outro">Outro</option>
-  </select>
+    <div class="campo">
+      <label>Forma de pagamento</label>
+      <select id="formaPagamento">
+        <option value="PIX">PIX</option>
+        <option value="Transferência">Transferência</option>
+        <option value="Dinheiro">Dinheiro</option>
+        <option value="Outro">Outro</option>
+      </select>
+    </div>
 
-  <br><br>
+    <div class="campo">
+      <label>Responsável financeiro</label>
+      <input type="text" id="responsavelFinanceiro" placeholder="Nome de quem realizou o pagamento">
+    </div>
 
-  <label>Responsável financeiro</label>
-  <input type="text" id="responsavelFinanceiro">
+    <div class="campo">
+      <label>Comprovante financeiro</label>
+      <input type="file" id="comprovanteFinanceiro">
+    </div>
 
-  <br><br>
+    <div class="campo">
+      <label>Observação</label>
+      <textarea id="observacao" placeholder="Informações adicionais sobre o pagamento"></textarea>
+    </div>
 
-  <label>Comprovante financeiro</label>
-  <input type="file" id="comprovanteFinanceiro" placeholder="Cole o link do Drive">
+    <div class="actions">
+      <button class="btn-pagar" onclick="pagarGasto()">Pagar gasto</button>
+      <button class="btn-cancelar" onclick="google.script.host.close()">Cancelar</button>
+    </div>
 
-  <br><br>
-
-  <label>Observação</label>
-  <textarea id="observacao"></textarea>
-
-  <br><br>
-
-  <button onclick="pagarGasto()">Pagar gasto</button>
+    <div id="loading" class="loading">Processando pagamento...</div>
+  </div>
 
   <script>
     function pagarGasto() {
       const idGasto = document.getElementById("idGasto").value;
       const formaPagamento = document.getElementById("formaPagamento").value;
-      const responsavelFinanceiro = document.getElementById("responsavelFinanceiro").value;
+      const responsavelFinanceiro = document.getElementById("responsavelFinanceiro").value.trim();
       const arquivo = document.getElementById("comprovanteFinanceiro").files[0];
       const observacao = document.getElementById("observacao").value;
+      const loading = document.getElementById("loading");
+
+      if (!responsavelFinanceiro) {
+        alert("Informe o responsável financeiro.");
+        return;
+      }
 
       if (!arquivo) {
         alert("Selecione o comprovante financeiro.");
         return;
       }
+
+      loading.style.display = "block";
 
       const reader = new FileReader();
 
@@ -68,6 +175,7 @@
                 google.script.host.close();
               })
               .withFailureHandler((error) => {
+                loading.style.display = "none";
                 alert("Erro ao processar pagamento: " + error.message);
               })
               .processarPagamento(
@@ -79,6 +187,7 @@
               );
           })
           .withFailureHandler((error) => {
+            loading.style.display = "none";
             alert("Erro ao enviar comprovante: " + error.message);
           })
           .uploadComprovanteFinanceiro(
@@ -92,5 +201,4 @@
     }
   </script>
 </body>
-
 </html>
