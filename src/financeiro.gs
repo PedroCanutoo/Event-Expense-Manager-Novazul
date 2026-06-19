@@ -156,6 +156,7 @@ function processarPagamento(
     valor,
     evento,
     comprovanteFinanceiro,
+    sheet.getRange(linha, 18).setValue(true),
   );
 }
 
@@ -195,7 +196,8 @@ function cancelarGasto(idGasto, motivoCancelamento) {
     idGasto,
     evento,
     valor,
-    motivoCancelamento
+    motivoCancelamento,
+    sheet.getRange(linha, 18).setValue(true),
   );
 }
 
