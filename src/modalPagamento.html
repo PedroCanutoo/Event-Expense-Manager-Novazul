@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <base target="_top">
 
@@ -65,27 +64,35 @@
       margin-top: 20px;
     }
 
-    .btn-pagar {
+    .btn-pagar,
+    .btn-cancelar,
+    .btn-cancelar-gasto {
       width: 100%;
       padding: 12px;
       border: none;
       border-radius: 6px;
-      background: #1f4e79;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .btn-cancelar {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      background: #e5e7eb;
-      color: #374151;
       font-weight: bold;
       cursor: pointer;
       margin-top: 8px;
+    }
+
+    .btn-pagar {
+      background: #1f4e79;
+      color: white;
+    }
+
+    .btn-cancelar {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-cancelar-gasto {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-cancelar-gasto:hover {
+      background: #b91c1c;
     }
 
     .loading {
@@ -97,20 +104,23 @@
       font-weight: bold;
     }
 
-    .btn-cancelar-gasto {
-      width: 100%;
+    .mensagem {
+      display: none;
+      margin-top: 12px;
       padding: 12px;
-      border: none;
       border-radius: 6px;
-      background: #dc2626;
-      color: white;
       font-weight: bold;
-      cursor: pointer;
-      margin-top: 8px;
+      font-size: 14px;
     }
 
-    .btn-cancelar-gasto:hover {
-      background: #b91c1c;
+    .sucesso {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .erro {
+      background: #fee2e2;
+      color: #991b1b;
     }
   </style>
 </head>
@@ -153,11 +163,6 @@
 
     <div class="actions">
       <button class="btn-pagar" onclick="pagarGasto()">Pagar gasto</button>
-      <button class="btn-cancelar" onclick="google.script.host.close()">Cancelar</button>
-    </div>
-
-    <div class="actions">
-      <button class="btn-pagar" onclick="pagarGasto()">Pagar gasto</button>
 
       <button class="btn-cancelar-gasto" onclick="mostrarCancelamento()">
         Cancelar gasto
@@ -171,77 +176,78 @@
     <div id="cancelamentoBox" style="display:none; margin-top:15px;">
       <label>Motivo do cancelamento</label>
 
-      <textarea id="motivoCancelamento" placeholder="Informe o motivo do cancelamento"></textarea>
+      <textarea
+        id="motivoCancelamento"
+        placeholder="Informe o motivo do cancelamento"></textarea>
 
       <button class="btn-cancelar-gasto" onclick="confirmarCancelamento()">
         Confirmar cancelamento
       </button>
     </div>
 
-    <div id="loading" class="loading">Processando pagamento...</div>
+    <div id="mensagem" class="mensagem"></div>
+    <div id="loading" class="loading">Processando...</div>
   </div>
 
   <script>
+    function mostrarMensagem(texto, tipo) {
+      const mensagem = document.getElementById("mensagem");
+
+      mensagem.textContent = texto;
+      mensagem.className = `mensagem ${tipo}`;
+      mensagem.style.display = "block";
+    }
+
+    function mostrarLoading(texto) {
+      const loading = document.getElementById("loading");
+      loading.textContent = texto;
+      loading.style.display = "block";
+    }
+
+    function esconderLoading() {
+      document.getElementById("loading").style.display = "none";
+    }
+
     function pagarGasto() {
       const idGasto = document.getElementById("idGasto").value;
       const formaPagamento = document.getElementById("formaPagamento").value;
       const responsavelFinanceiro = document.getElementById("responsavelFinanceiro").value.trim();
       const arquivo = document.getElementById("comprovanteFinanceiro").files[0];
       const observacao = document.getElementById("observacao").value;
-      const loading = document.getElementById("loading");
 
       if (!responsavelFinanceiro) {
-        alert("Informe o responsável financeiro.");
+        mostrarMensagem("Informe o responsável financeiro.", "erro");
         return;
       }
 
       if (!arquivo) {
-        alert("Selecione o comprovante financeiro.");
+        mostrarMensagem("Selecione o comprovante financeiro.", "erro");
         return;
       }
 
-      loading.style.display = "block";
+      mostrarLoading("Enviando comprovante...");
 
       const reader = new FileReader();
-
-      function mostrarCancelamento() {
-        document.getElementById("cancelamentoBox").style.display = "block";
-      }
-
-      function confirmarCancelamento() {
-        const idGasto = document.getElementById("idGasto").value;
-        const motivoCancelamento =
-          document.getElementById("motivoCancelamento").value;
-
-        if (!motivoCancelamento.trim()) {
-          alert("Informe o motivo do cancelamento.");
-          return;
-        }
-
-        google.script.run
-          .withSuccessHandler(() => {
-            alert("Gasto cancelado com sucesso!");
-            google.script.host.close();
-          })
-          .withFailureHandler((error) => {
-            alert("Erro ao cancelar gasto: " + error.message);
-          })
-          .cancelarGasto(idGasto, motivoCancelamento);
-      }
 
       reader.onload = function (event) {
         const base64 = event.target.result.split(",")[1];
 
         google.script.run
           .withSuccessHandler((linkComprovante) => {
+            mostrarLoading("Processando pagamento...");
+
             google.script.run
               .withSuccessHandler(() => {
-                alert("Pagamento processado com sucesso!");
-                google.script.host.close();
+                esconderLoading();
+                mostrarMensagem("Pagamento processado com sucesso!", "sucesso");
+
+                setTimeout(() => {
+                  google.script.host.close();
+                }, 1500);
               })
               .withFailureHandler((error) => {
-                loading.style.display = "none";
-                alert("Erro ao processar pagamento: " + error.message);
+                esconderLoading();
+                mostrarMensagem("Erro ao processar pagamento: " + error.message, "erro");
               })
               .processarPagamento(
                 idGasto,
@@ -252,8 +258,8 @@
               );
           })
           .withFailureHandler((error) => {
-            loading.style.display = "none";
-            alert("Erro ao enviar comprovante: " + error.message);
+            esconderLoading();
+            mostrarMensagem("Erro ao enviar comprovante: " + error.message, "erro");
           })
           .uploadComprovanteFinanceiro(
             base64,
@@ -271,24 +277,30 @@
 
     function confirmarCancelamento() {
       const idGasto = document.getElementById("idGasto").value;
-      const motivoCancelamento = document.getElementById("motivoCancelamento").value;
+      const motivoCancelamento = document.getElementById("motivoCancelamento").value.trim();
 
-      if (!motivoCancelamento.trim()) {
-        alert("Informe o motivo do cancelamento.");
+      if (!motivoCancelamento) {
+        mostrarMensagem("Informe o motivo do cancelamento.", "erro");
         return;
       }
 
+      mostrarLoading("Cancelando gasto...");
+
       google.script.run
         .withSuccessHandler(() => {
-          alert("Gasto cancelado com sucesso!");
-          google.script.host.close();
+          esconderLoading();
+          mostrarMensagem("Gasto cancelado com sucesso!", "sucesso");
+
+          setTimeout(() => {
+            google.script.host.close();
+          }, 1500);
         })
         .withFailureHandler((error) => {
-          alert("Erro ao cancelar gasto: " + error.message);
+          esconderLoading();
+          mostrarMensagem("Erro ao cancelar gasto: " + error.message, "erro");
         })
         .cancelarGasto(idGasto, motivoCancelamento);
     }
   </script>
 </body>
-
 </html>

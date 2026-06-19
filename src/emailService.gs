@@ -12,6 +12,7 @@ function enviarEmailPagamentoConfirmado(
   valor,
   evento,
   linkComprovante,
+  
 ) {
   const assunto = `Pagamento confirmado - ${idGasto}`;
 
