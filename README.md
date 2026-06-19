@@ -152,3 +152,8 @@ ui/
 Pedro Canuto
 
 Projeto desenvolvido como iniciativa de melhoria de processo interno e automação operacional para a Novazul.
+
+
+## Vídeo 
+
+![Funcionamento do Sistema](funcionamento/videofuncionamento.mp4)
