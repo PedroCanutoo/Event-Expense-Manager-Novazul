@@ -156,4 +156,4 @@ Projeto desenvolvido como iniciativa de melhoria de processo interno e automaç�
 
 ## Vídeo 
 
-![Funcionamento do Sistema](funcionamento/funcionamentovd.mp4)
+![Funcionamento do Sistema](docs/funcionamento/funcionamentovd.mp4)
